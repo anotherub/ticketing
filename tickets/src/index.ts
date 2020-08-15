@@ -8,8 +8,21 @@ const start = async () => {
   if (!process.env.MONGO_URI) {
     throw new Error('no MONGO_URI key found')
   }
+  if (!process.env.JWT_KEY) {
+    throw new Error('no JWT key found')
+  }
+  if (!process.env.NATS_URL) {
+    throw new Error('no NATS_URL key found')
+  }
+  if (!process.env.NATS_CLIENT_ID) {
+    throw new Error('no NATS_CLIENT_ID key found')
+  }
+  if (!process.env.NATS_CLUSTER_ID) {
+    throw new Error('no MONGO_URI key found')
+  }
+
   try {
-    await natsWrapper.connect('ticketing', 'asdf', 'https://nats-srv:4222')
+    await natsWrapper.connect(process.env.NATS_CLUSTER_ID, process.env.NATS_CLIENT_ID, process.env.NATS_URL)
     natsWrapper.client.on('close', () => {
       console.log('NATS connection closed!')
       process.exit()
