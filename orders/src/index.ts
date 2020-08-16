@@ -1,6 +1,10 @@
 import mongoose from 'mongoose'
 import { app } from './app'
 import { natsWrapper } from './nats-wrapper'
+
+import { TicketCreatedListener } from '../src/events/listeners/tikcet-created-listener'
+import { TicketUpdatedListener } from '../src/events/listeners/tikcet-updated-listener'
+import { Listener } from '@umeshbhatorg/common'
 const start = async () => {
   if (!process.env.JWT_KEY) {
     throw new Error('no jwt key found')
@@ -27,7 +31,8 @@ const start = async () => {
       console.log('NATS connection closed!')
       process.exit()
     })
-
+    new TicketCreatedListener(natsWrapper.client).listen()
+    new TicketUpdatedListener(natsWrapper.client).listen()
     process.on('SIGINT', () => natsWrapper.client.close())
     process.on('SIGTERM', () => natsWrapper.client.close())
     await mongoose.connect(process.env.MONGO_URI, {
@@ -36,7 +41,7 @@ const start = async () => {
       useCreateIndex: true
     })
     app.listen(3000, () => {
-      console.log('Ticket service is up and running on port:3000')
+      console.log('ORDER service is up and running on port:3000')
     })
   } catch (error) {
     console.log(error)

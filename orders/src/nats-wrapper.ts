@@ -3,7 +3,7 @@ class NatsWrapper {
   private _client?: Stan
   get client() {
     if (!this._client) {
-      throw new Error('Cannot access NATS:Tickets Service')
+      throw new Error('Cannot access NATS:Orders Service')
     }
     return this._client
   }
