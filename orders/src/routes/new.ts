@@ -6,7 +6,6 @@ import { Ticket } from '../models/ticket'
 import { Order, OrderStatus } from '../models/order'
 import { natsWrapper } from '../nats-wrapper'
 import { OrderCreatedPublisher } from '../events/publishers/order-created-publisher'
-import { idText } from 'typescript'
 const router = express.Router()
 const EXPIRATION_WINDOWS_SECONDS = 15 * 60
 
@@ -41,6 +40,7 @@ router.post(
     new OrderCreatedPublisher(natsWrapper.client).publish({
       id: order.id,
       status: order.status,
+      version: order.version,
       userId: req.currentUser!.id,
       expiresAt: order.expiresAt.toISOString(),
       ticket: {
