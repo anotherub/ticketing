@@ -28,6 +28,7 @@
   },
   "scripts": {
     "test": "jest --watchAll --no-cache",
+    "test:ci": "jest",
     "start": "ts-node-dev src/index.ts"
   },
   "jest": {
