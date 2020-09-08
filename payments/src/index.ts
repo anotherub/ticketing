@@ -1,12 +1,9 @@
 import mongoose from 'mongoose'
 import { app } from './app'
+import { OrderCancelledListener } from './events/listeners/order-cancelled-listener'
+import { OrderCreatedListener } from './events/listeners/order-created-listener'
 import { natsWrapper } from './nats-wrapper'
 
-import { TicketCreatedListener } from '../src/events/listeners/tikcet-created-listener'
-import { TicketUpdatedListener } from '../src/events/listeners/tikcet-updated-listener'
-import { Listener } from '@umeshbhatorg/common'
-import { ExpirationCompleteListener } from './events/listeners/expiration-complete-listener'
-import { PaymentCreatedListener } from './events/listeners/payment-created-listener'
 const start = async () => {
   if (!process.env.JWT_KEY) {
     throw new Error('no jwt key found')
@@ -16,6 +13,9 @@ const start = async () => {
   }
   if (!process.env.JWT_KEY) {
     throw new Error('no JWT key found')
+  }
+  if (!process.env.STRIPE_KEY) {
+    throw new Error('no STRIPE key found')
   }
   if (!process.env.NATS_URL) {
     throw new Error('no NATS_URL key found')
@@ -33,23 +33,20 @@ const start = async () => {
       console.log('NATS connection closed!')
       process.exit()
     })
+    new OrderCreatedListener(natsWrapper.client).listen()
+    new OrderCancelledListener(natsWrapper.client).listen()
     process.on('SIGINT', () => natsWrapper.client.close())
     process.on('SIGTERM', () => natsWrapper.client.close())
-    new TicketCreatedListener(natsWrapper.client).listen()
-    new TicketUpdatedListener(natsWrapper.client).listen()
-    new ExpirationCompleteListener(natsWrapper.client).listen()
-    new PaymentCreatedListener(natsWrapper.client).listen()
-
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true
     })
     app.listen(3000, () => {
-      console.log('ORDER service is up and running on port:3000')
+      console.log('Ticket service is up and running on port:3000')
     })
   } catch (error) {
-    console.log('****************', error)
+    console.log(error)
   }
 }
 start()
