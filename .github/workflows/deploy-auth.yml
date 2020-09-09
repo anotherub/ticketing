@@ -1,12 +1,10 @@
 name: deploy-auth
-
 on:
   push:
     branches: 
       - master
     paths:
       - 'auth/**'
-
 jobs:
   build:
     runs-on: ubuntu-latest
