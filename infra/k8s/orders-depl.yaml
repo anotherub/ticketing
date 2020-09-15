@@ -20,7 +20,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: jwt-secret
-                  key: jwt
+                  key: JWT_KEY
             - name: MONGO_URI
               value: 'mongodb://orders-mongo-srv:27017/orders'
             - name: NATS_URL
