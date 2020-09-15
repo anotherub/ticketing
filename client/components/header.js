@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-
 function header({ currentUser }) {
   const links = [
     !currentUser && { label: 'Sign up', href: '/auth/signup' },
