@@ -9,7 +9,6 @@ const buildClient = ({ req }) => {
     })
   } else {
     //running on browser
-
     return axios.create({
       baseURL: '/'
     })
